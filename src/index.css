@@ -1,0 +1,927 @@
+﻿@import "tailwindcss";
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  background-color: var(--theme-background, #0A0203);
+  color: var(--theme-text, #F8F1F2);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, span, li, td, th, label, a {
+  color: var(--theme-text, #F8F1F2);
+}
+
+svg { color: currentColor; }
+
+a {
+  color: var(--theme-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover { color: var(--theme-accent-light, var(--theme-accent)); }
+
+/* Cards */
+article, .card,
+[class*="rounded-xl"], [class*="rounded-2xl"], [class*="rounded-3xl"] {
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-text);
+}
+
+/* Buttons */
+button { color: var(--theme-text); }
+button[class*="bg-[var(--theme-combined)]"],
+button[class*="bg-[#641126]"],
+button[class*="bg-[#800020]"] {
+  background-color: var(--theme-primary);
+  color: #FFFFFF;
+  border: 1px solid var(--theme-primary-light);
+}
+
+/* Tables */
+table { border-color: var(--theme-border); }
+th {
+  background-color: var(--theme-background-soft);
+  color: var(--theme-text);
+  border-bottom: 1px solid var(--theme-border);
+}
+td { color: var(--theme-text); border-color: var(--theme-border); }
+tr:nth-child(even) { background-color: color-mix(in srgb, var(--theme-text) 3%, transparent); }
+
+/* Inputs */
+input, textarea, select {
+  background-color: var(--theme-background-soft);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+}
+input::placeholder, textarea::placeholder { color: var(--theme-text-muted); opacity: 0.8; }
+
+/* Focus ring — consistent, theme-aware, keyboard-only */
+:focus-visible {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 2px;
+}
+
+/* Selection + scrollbar match the active theme */
+::selection { background-color: var(--theme-accent); color: var(--theme-background); }
+
+* { scrollbar-color: var(--theme-primary-light) var(--theme-background-soft); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--theme-background-soft); }
+::-webkit-scrollbar-thumb {
+  background: var(--theme-primary-light);
+  border-radius: 999px;
+  border: 2px solid var(--theme-background-soft);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--theme-accent); }
+
+/* ============================================================
+   LEGACY HEX COMPATIBILITY LAYER
+   Older components still use hardcoded hex utility classes
+   (bg-[#641126], text-[#64748B], etc.) instead of theme
+   variables. This maps them onto the active theme so nothing
+   breaks while those components get migrated over time.
+   ============================================================ */
+
+[class*="bg-[#641126]"], [class*="bg-[#800020]"],
+[class*="bg-[#8F2945]"], [class*="bg-[#4A0010]"] {
+  background-color: var(--theme-primary) !important;
+  color: var(--theme-text) !important;
+}
+
+[class*="text-[#641126]"], [class*="text-[#800020]"],
+[class*="text-[#5A3B44]"], [class*="text-[#241116]"],
+[class*="text-[#1E293B]"] {
+  color: var(--theme-text) !important;
+}
+
+[class*="border-[#641126]"], [class*="border-[#800020]"],
+[class*="border-[#DCC5CC]"], [class*="border-[#E5D6DA]"] {
+  border-color: var(--theme-border) !important;
+}
+
+[class*="text-[#C9A227]"], [class*="text-[#D4AF37]"], [class*="text-[#E0C45A]"] {
+  color: var(--theme-accent) !important;
+}
+[class*="bg-[#C9A227]"], [class*="bg-[#D4AF37]"] {
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-background) !important;
+}
+
+[class*="bg-white"],
+[class*="bg-[#FAF8F8]"], [class*="bg-[#FAF6F7]"], [class*="bg-[#F8F3F4]"],
+[class*="bg-[#F8EEF1]"], [class*="bg-[#F1E7EA]"], [class*="bg-[#EADDE1]"],
+[class*="bg-slate-50"], [class*="bg-slate-100"] {
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+
+[class*="bg-[#180005]"], [class*="bg-[#2B0008]"], [class*="bg-[#210A11]"],
+[class*="bg-[#16070C]"], [class*="bg-[#35000D]"], [class*="bg-[#2B0D16]"] {
+  background-color: var(--theme-background-soft) !important;
+  color: var(--theme-text) !important;
+}
+
+[class*="text-[#806873]"], [class*="text-[#B89AA4]"], [class*="text-[#64748B]"],
+[class*="text-[#CBD5E1]"], [class*="text-slate-400"], [class*="text-slate-500"],
+[class*="text-slate-600"], [class*="text-[#D9A0AD]"], [class*="text-[#C98A9B]"],
+[class*="text-[#E5B7C0]"], [class*="text-[#DEC9CF]"] {
+  color: var(--theme-text-secondary) !important;
+}
+
+[class*="border-[#5A1A27]"], [class*="border-[#4A1A29]"],
+[class*="border-[#35121D]"], [class*="border-[#42101C]"] {
+  border-color: var(--theme-border) !important;
+}
+
+.text-white { color: var(--theme-text) !important; }
+
+[data-theme] [class*="bg-[var(--theme-light)]"]:not([class*="/"]) {
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+[data-theme] [class*="bg-[var(--theme-light)]"]:not([class*="/"]) * {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] section[class*="bg-[var(--theme-combined)]"],
+[data-theme] main[class*="bg-[var(--theme-combined)]"],
+[data-theme] div[class*="bg-[var(--theme-combined)]"][class*="py-"],
+[data-theme] div[class*="bg-[var(--theme-combined)]"][class*="px-"] {
+  background-color: var(--theme-background) !important;
+  color: var(--theme-text) !important;
+}
+[data-theme] section[class*="bg-[var(--theme-combined)]"] *,
+[data-theme] main[class*="bg-[var(--theme-combined)]"] *,
+[data-theme] div[class*="bg-[var(--theme-combined)]"][class*="py-"] *,
+[data-theme] div[class*="bg-[var(--theme-combined)]"][class*="px-"] * {
+  color: var(--theme-text) !important;
+}
+
+/* ============================================================
+   DARK THEMES — single source of truth per theme.
+   Palette values chain from --theme-primary / --theme-accent
+   so the whole theme can be retuned by editing a few lines.
+   ============================================================ */
+
+html[data-theme="burgundy"] {
+  --theme-background:       #0A0203;
+  --theme-background-soft:  #150508;
+  --theme-surface:          #1A0A10;
+  --theme-surface-elevated: #220D14;
+  --theme-border:           #3A1A24;
+  --theme-text:             #F8F1F2;
+  --theme-text-secondary:   #D4B8BE;
+  --theme-text-muted:       #9A7A82;
+  --theme-shadow:           rgba(0, 0, 0, 0.65);
+
+  --theme-primary:          #641126;
+  --theme-primary-light:    #8F2945;
+  --theme-accent:           #C9A227;
+  --theme-accent-light:     #E0C45A;
+
+  --theme-dark: var(--theme-background);
+  --theme-light: var(--theme-text);
+  --theme-combined: var(--theme-primary);
+
+  --color-burgundy: var(--theme-primary);
+  --color-burgundy-dark: #4A0010;
+  --color-burgundy-light: var(--theme-primary-light);
+  --color-burgundy-soft: #A63D55;
+  --color-burgundy-deep: var(--theme-text);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-background-soft);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-brand: 0 8px 30px color-mix(in srgb, var(--theme-primary) 50%, transparent);
+  color-scheme: dark;
+}
+
+html[data-theme="navy"] {
+  --theme-background:       #040A14;
+  --theme-background-soft:  #081120;
+  --theme-surface:          #0E1C30;
+  --theme-surface-elevated: #142640;
+  --theme-border:           #1E3557;
+  --theme-text:             #EAF3FA;
+  --theme-text-secondary:   #A8BDD4;
+  --theme-text-muted:       #6E86A0;
+  --theme-shadow:           rgba(0, 0, 0, 0.65);
+
+  --theme-primary:          #132238;
+  --theme-primary-light:    #1E3557;
+  --theme-accent:           #5EB3E4;
+  --theme-accent-light:     #90CCEF;
+
+  --theme-dark: var(--theme-background);
+  --theme-light: var(--theme-text);
+  --theme-combined: var(--theme-primary);
+
+  --color-burgundy: var(--theme-primary);
+  --color-burgundy-dark: #0A1524;
+  --color-burgundy-light: var(--theme-primary-light);
+  --color-burgundy-soft: #2A4A70;
+  --color-burgundy-deep: var(--theme-text);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-background-soft);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-brand: 0 8px 30px color-mix(in srgb, var(--theme-primary) 50%, transparent);
+  color-scheme: dark;
+}
+
+html[data-theme="charcoal"] {
+  --theme-background:       #08090B;
+  --theme-background-soft:  #101317;
+  --theme-surface:          #171A1F;
+  --theme-surface-elevated: #1F2329;
+  --theme-border:           #2B3038;
+  --theme-text:             #ECF0F4;
+  --theme-text-secondary:   #A8B2BF;
+  --theme-text-muted:       #6E7885;
+  --theme-shadow:           rgba(0, 0, 0, 0.7);
+
+  --theme-primary:          #20242A;
+  --theme-primary-light:    #323841;
+  --theme-accent:           #FF8C42;
+  --theme-accent-light:     #FFA866;
+
+  --theme-dark: var(--theme-background);
+  --theme-light: var(--theme-text);
+  --theme-combined: var(--theme-primary);
+
+  --color-burgundy: var(--theme-primary);
+  --color-burgundy-dark: #131519;
+  --color-burgundy-light: var(--theme-primary-light);
+  --color-burgundy-soft: #444B56;
+  --color-burgundy-deep: var(--theme-text);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: var(--theme-text);
+  --comp-input-bg: var(--theme-background-soft);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-brand: 0 8px 30px color-mix(in srgb, var(--theme-primary) 60%, transparent);
+  color-scheme: dark;
+}
+
+html[data-theme="grey"] {
+  --theme-background:       #0E0E0E;
+  --theme-background-soft:  #191919;
+  --theme-surface:          #1D1D1D;
+  --theme-surface-elevated: #262626;
+  --theme-border:           #333333;
+  --theme-text:             #F0F0F0;
+  --theme-text-secondary:   #B0B0B0;
+  --theme-text-muted:       #757575;
+  --theme-shadow:           rgba(0, 0, 0, 0.7);
+
+  --theme-primary:          #3A3A3A;
+  --theme-primary-light:    #545454;
+  --theme-accent:           #C4A484;
+  --theme-accent-light:     #D8BC9C;
+
+  --theme-dark: var(--theme-background);
+  --theme-light: var(--theme-text);
+  --theme-combined: var(--theme-primary);
+
+  --color-burgundy: var(--theme-primary);
+  --color-burgundy-dark: #1C1C1C;
+  --color-burgundy-light: var(--theme-primary-light);
+  --color-burgundy-soft: #6E6E6E;
+  --color-burgundy-deep: var(--theme-text);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: var(--theme-text);
+  --comp-input-bg: var(--theme-background-soft);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-brand: 0 8px 30px color-mix(in srgb, var(--theme-primary) 60%, transparent);
+  color-scheme: dark;
+}
+
+html[data-theme="silver"] {
+  --theme-background:       #0C0C0C;
+  --theme-background-soft:  #181818;
+  --theme-surface:          #1B1B1B;
+  --theme-surface-elevated: #242424;
+  --theme-border:           #333333;
+  --theme-text:             #F7F3EA;
+  --theme-text-secondary:   #C7BFA8;
+  --theme-text-muted:       #8A8370;
+  --theme-shadow:           rgba(0, 0, 0, 0.7);
+
+  --theme-primary:          #4A4A4A;
+  --theme-primary-light:    #666666;
+  --theme-accent:           #E8C766;
+  --theme-accent-light:     #F5DFA0;
+
+  --theme-dark: var(--theme-background);
+  --theme-light: var(--theme-text);
+  --theme-combined: var(--theme-primary);
+
+  --color-burgundy: var(--theme-primary);
+  --color-burgundy-dark: #2A2A2A;
+  --color-burgundy-light: var(--theme-primary-light);
+  --color-burgundy-soft: #808080;
+  --color-burgundy-deep: var(--theme-text);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: var(--theme-accent);
+  --comp-input-bg: var(--theme-background-soft);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-brand: 0 8px 30px color-mix(in srgb, var(--theme-accent) 35%, transparent);
+  color-scheme: dark;
+}
+
+/* Fallback before JS sets data-theme */
+html:not([data-theme]) {
+  --theme-background: #0A0203;
+  --theme-background-soft: #150508;
+  --theme-surface: #1A0A10;
+  --theme-border: #3A1A24;
+  --theme-text: #F8F1F2;
+  --theme-text-secondary: #D4B8BE;
+  --theme-text-muted: #9A7A82;
+  --theme-primary: #641126;
+  --theme-primary-light: #8F2945;
+  --theme-accent: #C9A227;
+  --theme-accent-light: #E0C45A;
+  color-scheme: dark;
+}
+
+/* ============================================================
+   LIGHT PALETTES — one block each, active via
+   html[data-mode="light"][data-light="..."]
+   ============================================================ */
+
+html[data-mode="light"][data-light="warm-sand"] {
+  --theme-background:       #FDF9F0;
+  --theme-background-soft:  #E8DEC5;
+  --theme-surface:          #FFFFFF;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-border:           #E8DEC5;
+  --theme-text:             #2A2418;
+  --theme-text-secondary:   #6E6452;
+  --theme-text-muted:       #8A7F68;
+  --theme-shadow:           rgba(139, 111, 31, 0.10);
+
+  --theme-primary:          #8B6F1F;
+  --theme-primary-light:    #D9A441;
+  --theme-accent:           #D9A441;
+  --theme-accent-light:     #E8C06E;
+
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-surface);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+  color-scheme: light;
+}
+
+html[data-mode="light"][data-light="analyst-slate"] {
+  --theme-background:       #F8FAFC;
+  --theme-background-soft:  #EFF6FF;
+  --theme-surface:          #FFFFFF;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-border:           #E2E8F0;
+  --theme-text:             #0F172A;
+  --theme-text-secondary:   #64748B;
+  --theme-text-muted:       #94A3B8;
+  --theme-shadow:           rgba(15, 23, 42, 0.08);
+
+  --theme-primary:          #0F172A;
+  --theme-primary-light:    #2563EB;
+  --theme-accent:           #2563EB;
+  --theme-accent-light:     #3B82F6;
+
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-surface);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+  color-scheme: light;
+}
+
+html[data-mode="light"][data-light="pearl-bronze"] {
+  --theme-background:       #FBFAF7;
+  --theme-background-soft:  #E5DCC8;
+  --theme-surface:          #FFFFFF;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-border:           #E5DCC8;
+  --theme-text:             #1F1B14;
+  --theme-text-secondary:   #5E5546;
+  --theme-text-muted:       #837961;
+  --theme-shadow:           rgba(122, 92, 46, 0.10);
+
+  --theme-primary:          #7A5C2E;
+  --theme-primary-light:    #C49A4D;
+  --theme-accent:           #C49A4D;
+  --theme-accent-light:     #D9B876;
+
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-surface);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+  color-scheme: light;
+}
+
+html[data-mode="light"][data-light="antique-ivory"] {
+  --theme-background:       #FBF6EA;
+  --theme-background-soft:  #E6DAC0;
+  --theme-surface:          #FFFFFF;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-border:           #E6DAC0;
+  --theme-text:             #201A10;
+  --theme-text-secondary:   #6B5C3D;
+  --theme-text-muted:       #8F7F5C;
+  --theme-shadow:           rgba(150, 107, 42, 0.10);
+
+  --theme-primary:          #966B2A;
+  --theme-primary-light:    #D4AF37;
+  --theme-accent:           #D4AF37;
+  --theme-accent-light:     #E3C465;
+
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-surface);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+  color-scheme: light;
+}
+
+html[data-mode="light"][data-light="cool-platinum"] {
+  --theme-background:       #F7F7F4;
+  --theme-background-soft:  #DEDED8;
+  --theme-surface:          #FFFFFF;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-border:           #DEDED8;
+  --theme-text:             #1A1A18;
+  --theme-text-secondary:   #5C5C58;
+  --theme-text-muted:       #83837E;
+  --theme-shadow:           rgba(74, 74, 71, 0.10);
+
+  --theme-primary:          #4A4A47;
+  --theme-primary-light:    #BFA76A;
+  --theme-accent:           #BFA76A;
+  --theme-accent-light:     #D3C08D;
+
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-surface);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+  color-scheme: light;
+}
+
+html[data-mode="light"][data-light="baby-pink"] {
+  --theme-background:       #FDF0F3;
+  --theme-background-soft:  #FAD9E1;
+  --theme-surface:          #FFFFFF;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-border:           #F5D5DE;
+  --theme-text:             #2A1520;
+  --theme-text-secondary:   #7A5060;
+  --theme-text-muted:       #A87E8C;
+  --theme-shadow:           rgba(216, 132, 158, 0.12);
+
+  --theme-primary:          #D8849E;
+  --theme-primary-light:    #F4B6C8;
+  --theme-accent:           #F4B6C8;
+  --theme-accent-light:     #FAD0DC;
+
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-surface: var(--theme-surface);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-border: var(--theme-border);
+  --color-gold: var(--theme-accent);
+  --color-gold-light: var(--theme-accent-light);
+
+  --comp-navbar-bg: var(--theme-surface);
+  --comp-navbar-text: var(--theme-text);
+  --comp-navbar-border: var(--theme-border);
+  --comp-card-bg: var(--theme-surface);
+  --comp-card-text: var(--theme-text);
+  --comp-card-border: var(--theme-border);
+  --comp-btn-primary-bg: var(--theme-primary);
+  --comp-btn-primary-text: #FFFFFF;
+  --comp-input-bg: var(--theme-surface);
+  --comp-input-text: var(--theme-text);
+  --comp-input-border: var(--theme-border);
+  color-scheme: light;
+}
+
+/* ============================================================
+   LIGHT MODE — global overrides for legacy hardcoded classes
+   (single copy; was previously repeated 3x in this file)
+   ============================================================ */
+
+html[data-mode="light"],
+html[data-mode="light"] body,
+html[data-mode="light"] #root {
+  background-color: var(--theme-background) !important;
+  color: var(--theme-text) !important;
+  color-scheme: light;
+}
+
+html[data-mode="light"] h1, html[data-mode="light"] h2, html[data-mode="light"] h3,
+html[data-mode="light"] h4, html[data-mode="light"] h5, html[data-mode="light"] h6,
+html[data-mode="light"] p, html[data-mode="light"] span, html[data-mode="light"] a,
+html[data-mode="light"] li, html[data-mode="light"] td, html[data-mode="light"] th,
+html[data-mode="light"] label, html[data-mode="light"] strong, html[data-mode="light"] em,
+html[data-mode="light"] small, html[data-mode="light"] b, html[data-mode="light"] i,
+html[data-mode="light"] code, html[data-mode="light"] pre, html[data-mode="light"] blockquote {
+  color: var(--theme-text) !important;
+}
+
+html[data-mode="light"] [class*="text-white"],
+html[data-mode="light"] [class*="text-[var(--theme-light)]"],
+html[data-mode="light"] [class*="text-[var(--theme-text)]"],
+html[data-mode="light"] [class*="text-[#F8F1F2]"],
+html[data-mode="light"] [class*="text-[#F5E6E8]"],
+html[data-mode="light"] [class*="text-[#EAF3FA]"],
+html[data-mode="light"] [class*="text-[#ECF0F4]"],
+html[data-mode="light"] [class*="text-[#F0F0F0]"],
+html[data-mode="light"] [class*="text-[#F7F3EA]"],
+html[data-mode="light"] [class*="text-[#D4B8BE]"],
+html[data-mode="light"] [class*="text-[#A8BDD4]"],
+html[data-mode="light"] [class*="text-[#A8B2BF]"],
+html[data-mode="light"] [class*="text-[#C7BFA8]"],
+html[data-mode="light"] [class*="text-[#D9A0AD]"],
+html[data-mode="light"] [class*="text-[#C98A9B]"] {
+  color: var(--theme-text) !important;
+}
+
+html[data-mode="light"] [class*="text-[#806873]"],
+html[data-mode="light"] [class*="text-[#5A3B44]"],
+html[data-mode="light"] [class*="text-[#64748B]"],
+html[data-mode="light"] [class*="text-[#B89AA4]"],
+html[data-mode="light"] [class*="text-[#CBD5E1]"],
+html[data-mode="light"] [class*="text-slate-400"],
+html[data-mode="light"] [class*="text-slate-500"],
+html[data-mode="light"] [class*="text-[var(--theme-text-secondary)]"],
+html[data-mode="light"] [class*="text-[var(--theme-text-muted)]"] {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-mode="light"] [class*="bg-white"],
+html[data-mode="light"] [class*="bg-[#FAF8F8]"], html[data-mode="light"] [class*="bg-[#FAF6F7]"],
+html[data-mode="light"] [class*="bg-[#F8F3F4]"], html[data-mode="light"] [class*="bg-[#F8EEF1]"],
+html[data-mode="light"] [class*="bg-[#F1E7EA]"], html[data-mode="light"] [class*="bg-[#EADDE1]"],
+html[data-mode="light"] [class*="bg-[#180005]"], html[data-mode="light"] [class*="bg-[#2B0008]"],
+html[data-mode="light"] [class*="bg-[#210A11]"], html[data-mode="light"] [class*="bg-[#16070C]"],
+html[data-mode="light"] [class*="bg-[#35000D]"], html[data-mode="light"] [class*="bg-[#2B0D16]"],
+html[data-mode="light"] [class*="bg-[#641126]"], html[data-mode="light"] [class*="bg-[#800020]"],
+html[data-mode="light"] [class*="bg-[var(--theme-dark)]"],
+html[data-mode="light"] [class*="bg-[var(--theme-surface)]"],
+html[data-mode="light"] [class*="bg-[var(--theme-background)]"] {
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+html[data-mode="light"] [class*="bg-white"] *,
+html[data-mode="light"] [class*="bg-[#FAF8F8]"] *, html[data-mode="light"] [class*="bg-[#FAF6F7]"] *,
+html[data-mode="light"] [class*="bg-[#F8F3F4]"] *, html[data-mode="light"] [class*="bg-[#F8EEF1]"] *,
+html[data-mode="light"] [class*="bg-[#F1E7EA]"] *, html[data-mode="light"] [class*="bg-[#EADDE1]"] *,
+html[data-mode="light"] [class*="bg-[#180005]"] *, html[data-mode="light"] [class*="bg-[#2B0008]"] *,
+html[data-mode="light"] [class*="bg-[#210A11]"] *, html[data-mode="light"] [class*="bg-[#16070C]"] *,
+html[data-mode="light"] [class*="bg-[#35000D]"] *, html[data-mode="light"] [class*="bg-[#2B0D16]"] * {
+  color: var(--theme-text) !important;
+}
+
+html[data-mode="light"] [class*="border-"] {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-mode="light"] button[class*="bg-[var(--theme-combined)]"],
+html[data-mode="light"] a[class*="bg-[var(--theme-combined)]"],
+html[data-mode="light"] button[class*="bg-[#641126]"],
+html[data-mode="light"] a[class*="bg-[#641126]"],
+html[data-mode="light"] button[class*="bg-[#800020]"],
+html[data-mode="light"] a[class*="bg-[#800020]"],
+html[data-mode="light"] button[class*="bg-[var(--comp-btn-primary-bg)]"],
+html[data-mode="light"] a[class*="bg-[var(--comp-btn-primary-bg)]"] {
+  background-color: var(--theme-primary) !important;
+  color: #FFFFFF !important;
+  border-color: var(--theme-primary) !important;
+}
+html[data-mode="light"] button[class*="bg-[var(--theme-combined)]"] *,
+html[data-mode="light"] a[class*="bg-[var(--theme-combined)]"] *,
+html[data-mode="light"] button[class*="bg-[#641126]"] *,
+html[data-mode="light"] a[class*="bg-[#641126]"] *,
+html[data-mode="light"] button[class*="bg-[#800020]"] *,
+html[data-mode="light"] a[class*="bg-[#800020]"] * {
+  color: #FFFFFF !important;
+}
+
+html[data-mode="light"] svg { color: currentColor !important; }
+
+html[data-mode="light"] input, html[data-mode="light"] textarea, html[data-mode="light"] select {
+  background-color: var(--comp-input-bg) !important;
+  color: var(--comp-input-text) !important;
+  border-color: var(--comp-input-border) !important;
+}
+html[data-mode="light"] input::placeholder, html[data-mode="light"] textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+  opacity: 0.7;
+}
+
+html[data-mode="light"] table, html[data-mode="light"] thead, html[data-mode="light"] tbody,
+html[data-mode="light"] tr, html[data-mode="light"] th, html[data-mode="light"] td {
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+html[data-mode="light"] th {
+  background-color: var(--theme-background-soft) !important;
+}
+
+/* ============================================================
+   PREMIUM VISUAL & ANIMATION LAYER
+   Reusable utility classes — apply these in your components.
+   All motion respects prefers-reduced-motion at the bottom.
+   ============================================================ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes shine {
+  0%   { transform: translateX(-120%) skewX(-15deg); }
+  100% { transform: translateX(220%) skewX(-15deg); }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fade-in    { animation: fadeIn 0.5s ease both; }
+.animate-scale-in   { animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-float       { animation: floatY 4s ease-in-out infinite; }
+
+/* Stagger helper — pair with .animate-fade-in-up on siblings */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.15s; }
+.stagger-3 { animation-delay: 0.25s; }
+.stagger-4 { animation-delay: 0.35s; }
+.stagger-5 { animation-delay: 0.45s; }
+
+/* Scroll-reveal hook target: add class="reveal" in JSX, then
+   toggle "is-visible" via an IntersectionObserver hook. */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* Card lift + glow on hover */
+.card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--theme-accent);
+  box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--theme-accent) 35%, transparent);
+}
+
+/* Specular sweep on buttons — wrap button content, add .btn-shine to the button */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: translateX(-120%) skewX(-15deg);
+  pointer-events: none;
+}
+.btn-shine:hover::after { animation: shine 0.9s ease forwards; }
+
+/* Gradient headline text */
+.text-gradient {
+  background: linear-gradient(120deg, var(--theme-accent), var(--theme-accent-light, var(--theme-accent)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Frosted glass surface (great over hero backgrounds/graphics) */
+.glass-panel {
+  background: color-mix(in srgb, var(--theme-surface) 65%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid color-mix(in srgb, var(--theme-border) 80%, transparent);
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--theme-surface) 25%,
+    var(--theme-surface-elevated) 50%,
+    var(--theme-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Soft radial glow accent — absolutely position behind hero content */
+.glow-accent {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--theme-accent) 35%, transparent), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up, .animate-fade-in, .animate-scale-in,
+  .animate-float, .reveal, .skeleton, .btn-shine::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
