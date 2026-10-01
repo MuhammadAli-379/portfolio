@@ -1,4 +1,4 @@
-﻿import React, {
+import React, {
   Suspense,
   lazy,
   useEffect,
@@ -342,6 +342,24 @@ function AppContent() {
   const [isCustomizeOpen, setIsCustomizeOpen] =
     useState(false);
 
+  const location = useLocation();
+
+  /* ===================================================
+     Hash Scroll Support
+  =================================================== */
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }, 80);
+      }
+    }
+  }, [location.pathname, location.hash]);
+
   /* ===================================================
      Theme
   =================================================== */
@@ -461,6 +479,24 @@ function AppContent() {
 
                 <Suspense fallback={sectionFallback}>
                   <SectionErrorBoundary>
+                    <About
+                      profile={data.profile}
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <SkillsSection
+                      skills={data.skills}
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <ProjectsSection
+                      projects={data.projects}
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
                     <AnalyticsMindset
                       workflow={data.workflow}
                     />
@@ -468,6 +504,42 @@ function AppContent() {
 
                   <SectionErrorBoundary>
                     <AnalyticsPlayground />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <EducationSection
+                      education={data.education}
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <ExperienceSection
+                      experienceStatement={
+                        data.experienceStatement
+                      }
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <CertificationsSection
+                      notice={
+                        data.certificationsNotice
+                      }
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <AchievementsSection
+                      notice={
+                        data.achievementsNotice
+                      }
+                    />
+                  </SectionErrorBoundary>
+
+                  <SectionErrorBoundary>
+                    <ContactSection
+                      profile={data.profile}
+                    />
                   </SectionErrorBoundary>
                 </Suspense>
               </>
@@ -515,6 +587,22 @@ function AppContent() {
             }
           />
 
+          {/* ================= EXPERIENCE ================= */}
+
+          <Route
+            path="/experience"
+            element={
+              <Suspense fallback={sectionFallback}>
+                <SectionErrorBoundary>
+                  <ExperienceSection
+                    experienceStatement={data.experienceStatement}
+                    certificationsNotice={data.certificationsNotice}
+                  />
+                </SectionErrorBoundary>
+              </Suspense>
+            }
+          />
+
           {/* ================= EDUCATION ================= */}
 
           <Route
@@ -528,26 +616,8 @@ function AppContent() {
                 </SectionErrorBoundary>
 
                 <SectionErrorBoundary>
-                  <ExperienceSection
-                    experienceStatement={
-                      data.experienceStatement
-                    }
-                  />
-                </SectionErrorBoundary>
-
-                <SectionErrorBoundary>
-                  <CertificationsSection
-                    notice={
-                      data.certificationsNotice
-                    }
-                  />
-                </SectionErrorBoundary>
-
-                <SectionErrorBoundary>
                   <AchievementsSection
-                    notice={
-                      data.achievementsNotice
-                    }
+                    notice={data.achievementsNotice}
                   />
                 </SectionErrorBoundary>
               </Suspense>

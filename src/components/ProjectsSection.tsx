@@ -55,11 +55,11 @@ type Accent = 'burgundy' | 'gold';
    shows a disabled "Demo coming soon" button instead.
 ============================================================= */
 const LIVE_DEMOS = {
-  timeSeries: 'https://www.kaggle.com/', 
+  timeSeries: 'https://sales-forecasting-intelligence.vercel.app/', 
   creditRisk: 'https://credit-risk-app-live-demo.streamlit.app/',
-  portfolio: 'https://www.kaggle.com/', // TODO: add link
-  ecommerce: 'https://www.kaggle.com/', // TODO: add link
-  financialRatio: 'https://www.kaggle.com/', // TODO: add link
+  portfolio: 'https://portfolio-analysis-live-demo2.ai.studio',
+  ecommerce: 'https://e-commerce-database-design-109.vercel.app/',
+  financialRatio: 'https://financial-analysis-dashboard-109.streamlit.app/',
 } as const;
 
 const cardBase =

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Menu,
   X,
@@ -8,6 +8,11 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Home,
+  User,
+  Code2,
+  FolderKanban,
+  Briefcase,
+  Mail,
 } from 'lucide-react';
 
 import {
@@ -70,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const location = useLocation();
 
   /* =====================================================
-     Navigation Items
+     Navigation Items (Dedicated Separate Pages)
   ===================================================== */
 
   const navItems: NavItem[] = [
@@ -82,22 +87,32 @@ export const Navbar: React.FC<NavbarProps> = ({
     {
       label: 'About',
       path: '/about',
+      icon: <User className="h-3.5 w-3.5" />,
     },
     {
       label: 'Skills',
       path: '/skills',
+      icon: <Code2 className="h-3.5 w-3.5" />,
     },
     {
       label: 'Projects',
       path: '/projects',
+      icon: <FolderKanban className="h-3.5 w-3.5" />,
+    },
+    {
+      label: 'Experience',
+      path: '/experience',
+      icon: <Briefcase className="h-3.5 w-3.5" />,
     },
     {
       label: 'Education',
       path: '/education',
+      icon: <GraduationCap className="h-3.5 w-3.5" />,
     },
     {
       label: 'Contact',
       path: '/contact',
+      icon: <Mail className="h-3.5 w-3.5" />,
     },
   ];
 
@@ -391,52 +406,49 @@ export const Navbar: React.FC<NavbarProps> = ({
                   rounded-xl
                   px-3
                   py-2
-                  text-[10px]
+                  text-[11px]
                   font-semibold
-                  uppercase
-                  tracking-[0.1em]
+                  tracking-wide
                   transition-all
                   duration-200
 
                   ${
                     isActive
                       ? `
-                        bg-[var(--theme-background)]
-                        text-[var(--theme-primary-light)]
+                        bg-[var(--theme-primary)]/15
+                        text-[var(--theme-accent)]
                         shadow-sm
                       `
                       : `
-                        text-[var(--theme-text-muted)]
+                        text-[var(--theme-text-secondary)]
                         hover:bg-[var(--theme-background-soft)]
-                        hover:text-[var(--theme-primary-light)]
+                        hover:text-[var(--theme-text)]
                       `
                   }
                 `}
               >
-                {item.icon && item.icon}
+                {item.icon && <span className="opacity-80">{item.icon}</span>}
 
                 <span>
                   {item.label}
                 </span>
 
                 {/* Active underline */}
-
                 <span
                   aria-hidden="true"
-                  className="
+                  className={`
                     absolute
                     bottom-0.5
                     left-1/2
                     h-[2px]
-                    w-4
+                    w-5
                     -translate-x-1/2
                     rounded-full
                     bg-[var(--theme-accent)]
-                    opacity-0
-                    transition-opacity
+                    transition-all
                     duration-200
-                  "
-                  data-active="underline"
+                    ${(location.pathname === item.path || (item.path === '/' && location.pathname === '')) ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}
+                  `}
                 />
               </NavLink>
             ))}
@@ -698,6 +710,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={item.path}
                   to={item.path}
                   end={item.path === '/'}
+                  onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) => `
                     flex
                     items-center
@@ -705,7 +718,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     rounded-xl
                     border
                     px-3.5
-                    py-3
+                    py-2.5
                     text-xs
                     font-semibold
                     transition-all
@@ -714,16 +727,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ${
                       isActive
                         ? `
-                          border-[var(--theme-primary)]/20
-                          bg-[var(--theme-primary)]/10
-                          text-[var(--theme-primary-light)]
+                          border-[var(--theme-accent)]/30
+                          bg-[var(--theme-primary)]/15
+                          text-[var(--theme-accent)]
+                          shadow-sm
                         `
                         : `
-                          border-transparent
-                          text-[var(--theme-text-muted)]
-                          hover:border-[var(--theme-border)]
+                          border-[var(--theme-border)]
+                          bg-[var(--theme-surface)]
+                          text-[var(--theme-text-secondary)]
+                          hover:border-[var(--theme-primary-light)]/40
                           hover:bg-[var(--theme-surface-soft)]
-                          hover:text-[var(--theme-primary-light)]
+                          hover:text-[var(--theme-text)]
                         `
                     }
                   `}

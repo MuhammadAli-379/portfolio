@@ -476,6 +476,18 @@ export const EcommerceDatabaseCaseStudyModal: React.FC<EcommerceDatabaseCaseStud
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">
+            {/* Live Demo Button */}
+            <a
+              href="https://e-commerce-database-design-109.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-sm hover:-translate-y-0.5"
+              title="Open Live E-Commerce Database Demo (new tab)"
+            >
+              <span>Live App</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
             <button
               onClick={onClose}
               className="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"

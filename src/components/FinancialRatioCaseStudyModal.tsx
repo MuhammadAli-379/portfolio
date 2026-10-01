@@ -24,7 +24,8 @@ import {
   AlertTriangle,
   Calculator,
   Compass,
-  FileSpreadsheet
+  FileSpreadsheet,
+  ExternalLink
 } from 'lucide-react';
 import { AcademicProject } from '../types/portfolio';
 
@@ -248,6 +249,18 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
                 <span className="text-slate-800 dark:text-slate-200 font-semibold">MARI</span>
               </span>
             </div>
+
+            {/* Live Streamlit Dashboard Button */}
+            <a
+              href="https://financial-analysis-dashboard-109.streamlit.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-sm hover:-translate-y-0.5"
+              title="Open Live Streamlit Dashboard (new tab)"
+            >
+              <span>Live App</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
 
             <button
               onClick={onClose}

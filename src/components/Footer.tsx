@@ -21,13 +21,13 @@ export const Footer: React.FC<FooterProps> = ({ profile }) => {
   };
 
   const navLinks = [
-    { label: 'About', href: '#about' },
-    { label: 'Objective', href: '#objective' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Mindset', href: '#mindset' },
-    { label: 'Education', href: '#education' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'About', href: '/#about' },
+    { label: 'Objective', href: '/#objective' },
+    { label: 'Skills', href: '/#skills' },
+    { label: 'Projects', href: '/#projects' },
+    { label: 'Mindset', href: '/#mindset' },
+    { label: 'Education', href: '/#education' },
+    { label: 'Contact', href: '/#contact' },
   ];
 
   const cleanPhone = profile.phone.replace(/[\s-]/g, '');

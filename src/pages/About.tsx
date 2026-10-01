@@ -8,16 +8,18 @@ import {
   GraduationCap,
   CheckCircle2,
   Sparkles,
+  User,
 } from 'lucide-react';
 import { StudentProfile } from '../types/portfolio';
 import { useReveal } from '../hooks/useReveal';
+import { PageHeader } from '../components/PageHeader';
+import { PageNavigation } from '../components/PageNavigation';
 
 interface AboutProps {
   profile: StudentProfile;
 }
 
 export const About: React.FC<AboutProps> = ({ profile }) => {
-  const headerRef = useReveal<HTMLDivElement>();
   const cardRef = useReveal<HTMLDivElement>();
   const bioRef = useReveal<HTMLDivElement>();
   const objectiveRef = useReveal<HTMLDivElement>();
@@ -25,9 +27,9 @@ export const About: React.FC<AboutProps> = ({ profile }) => {
   const languagesRef = useReveal<HTMLDivElement>();
 
   return (
-    <section
+    <div
       id="about"
-      className="relative overflow-hidden border-t border-[var(--theme-border)] bg-[var(--theme-background)] py-20 sm:py-24"
+      className="relative min-h-[calc(100vh-72px)] overflow-hidden bg-[var(--theme-background)] pt-28 pb-20 sm:pt-32 sm:pb-24"
     >
       {/* Ambient glow accents */}
       <div
@@ -40,25 +42,13 @@ export const About: React.FC<AboutProps> = ({ profile }) => {
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div ref={headerRef} className="reveal mb-14 max-w-3xl">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="h-px w-8 bg-[var(--theme-accent)]" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--theme-accent)]">
-              Profile &amp; Background
-            </span>
-          </div>
-
-          <h2 className="text-gradient text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.7rem]">
-            About Me
-          </h2>
-
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--theme-text-secondary)] sm:text-base">
-            Business Data Analytics undergraduate at COMSATS University
-            Islamabad, developing practical expertise in data analysis,
-            business intelligence, and technology-driven decision making.
-          </p>
-        </div>
+        {/* Dedicated Page Header */}
+        <PageHeader
+          badge="Profile & Background"
+          badgeIcon={<User className="h-3.5 w-3.5" />}
+          title="About Me"
+          description="Business Data Analytics undergraduate at COMSATS University Islamabad, developing practical expertise in data analysis, business intelligence, and technology-driven decision making."
+        />
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
@@ -276,7 +266,13 @@ export const About: React.FC<AboutProps> = ({ profile }) => {
             </div>
           </div>
         </div>
+
+        {/* Page Navigation */}
+        <PageNavigation
+          prev={{ label: 'Home', path: '/' }}
+          next={{ label: 'Skills & Toolkit', path: '/skills' }}
+        />
       </div>
-    </section>
+    </div>
   );
 };

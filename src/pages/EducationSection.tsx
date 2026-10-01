@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   BookOpen,
   CalendarDays,
@@ -8,6 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { EducationInfo } from '../types/portfolio';
+import { PageNavigation } from '../components/PageNavigation';
 
 interface EducationSectionProps {
   education: EducationInfo;
@@ -89,11 +91,16 @@ const SnapshotCard: React.FC<SnapshotCardProps> = ({ item, education }) => (
 export const EducationSection: React.FC<EducationSectionProps> = ({
   education,
 }) => {
+  const location = useLocation();
+  const isStandalonePage = location.pathname === '/education';
+
   return (
     <section
       id="education"
       aria-labelledby="education-heading"
-      className="relative overflow-hidden border-t border-[var(--color-border)] bg-[var(--color-background)] py-20 sm:py-24"
+      className={`relative overflow-hidden border-t border-[var(--color-border)] bg-[var(--color-background)] ${
+        isStandalonePage ? 'min-h-[calc(100vh-72px)] pt-28 pb-20 sm:pt-32 sm:pb-24' : 'py-20 sm:py-24'
+      }`}
     >
       {/* Ambient decorative backgrounds — hidden from assistive tech */}
       <div
@@ -256,6 +263,13 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
             .
           </p>
         </aside>
+
+        {isStandalonePage && (
+          <PageNavigation
+            prev={{ label: 'Experience & Credentials', path: '/experience' }}
+            next={{ label: 'Contact', path: '/contact' }}
+          />
+        )}
 
       </div>
     </section>

@@ -12,7 +12,8 @@ import {
   Layers,
   BookOpen,
   ShieldCheck,
-  Activity
+  Activity,
+  ExternalLink
 } from 'lucide-react';
 import { AcademicProject } from '../types/portfolio';
 
@@ -81,13 +82,27 @@ export const TimeSeriesCaseStudyModal: React.FC<TimeSeriesCaseStudyModalProps> =
             </p>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
-            aria-label="Close case study modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Live Demo Button */}
+            <a
+              href="https://sales-forecasting-intelligence.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-sm hover:-translate-y-0.5"
+              title="Open Live Sales Forecasting Demo (new tab)"
+            >
+              <span>Live App</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+              aria-label="Close case study modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Tab Controls */}

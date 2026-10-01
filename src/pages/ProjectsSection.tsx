@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 
 import { AcademicProject } from '../types/portfolio';
+import { PageHeader } from '../components/PageHeader';
+import { PageNavigation } from '../components/PageNavigation';
 import { CreditRiskCaseStudyModal } from '../components/CreditRiskCaseStudyModal';
 import { TimeSeriesCaseStudyModal } from '../components/TimeSeriesCaseStudyModal';
 import { FinancialPortfolioCaseStudyModal } from '../components/FinancialPortfolioCaseStudyModal';
@@ -55,11 +57,11 @@ type Accent = 'burgundy' | 'gold';
    shows a disabled "Demo coming soon" button instead.
 ============================================================= */
 const LIVE_DEMOS = {
-  timeSeries: 'https://www.kaggle.com/', 
+  timeSeries: 'https://sales-forecasting-intelligence.vercel.app/', 
   creditRisk: 'https://credit-risk-app-live-demo.streamlit.app/',
-  portfolio: 'https://www.kaggle.com/', // TODO: add link
-  ecommerce: 'https://www.kaggle.com/', // TODO: add link
-  financialRatio: 'https://www.kaggle.com/', // TODO: add link
+  portfolio: 'https://portfolio-analysis-live-demo2.ai.studio',
+  ecommerce: 'https://e-commerce-database-design-109.vercel.app/',
+  financialRatio: 'https://financial-analysis-dashboard-109.streamlit.app/',
 } as const;
 
 const cardBase =
@@ -140,10 +142,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
   return (
     <>
-      <section
+      <div
         id="projects"
         aria-labelledby="projects-heading"
-        className="relative border-t border-[var(--color-border-light)] bg-[var(--color-background-soft)] py-20 dark:border-[var(--color-dark-border-light)] dark:bg-[var(--color-dark-background-soft)] sm:py-24"
+        className="relative min-h-[calc(100vh-72px)] overflow-hidden bg-[var(--theme-background)] pt-28 pb-20 sm:pt-32 sm:pb-24"
       >
         {/* Decorative background */}
         <div
@@ -155,28 +157,13 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* HEADER */}
-          <header className="mb-12 max-w-4xl">
-            <div className="mb-3 inline-flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-burgundy)] dark:text-[var(--color-burgundy-light)]">
-              <FolderKanban className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Academic Work &amp; Coursework</span>
-            </div>
-
-            <h2
-              id="projects-heading"
-              className="text-3xl font-bold tracking-tight text-[var(--color-text)] dark:text-[var(--color-dark-text)] sm:text-4xl"
-            >
-              Academic Projects
-            </h2>
-
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--color-text-secondary)] dark:text-[var(--color-dark-text-secondary)] sm:text-base">
-              Applied coursework spanning business finance, database systems,
-              business data analysis, machine learning, and financial
-              management. Each project demonstrates a structured approach to
-              data preparation, analytical modeling, financial interpretation,
-              and technical documentation.
-            </p>
-          </header>
+          {/* Dedicated Page Header */}
+          <PageHeader
+            badge="Academic Work & Coursework"
+            badgeIcon={<FolderKanban className="h-3.5 w-3.5" />}
+            title="Academic Projects"
+            description="Applied coursework spanning business finance, database systems, business data analysis, machine learning, and financial management. Each project demonstrates a structured approach to data preparation, analytical modeling, financial interpretation, and technical documentation."
+          />
 
           {/* COURSEWORK OVERVIEW */}
           <div className="mb-10 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] dark:border-[var(--color-dark-border)] dark:bg-[var(--color-dark-surface)]">
@@ -460,8 +447,14 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               used for each assignment.
             </p>
           </div>
+
+          {/* Page Navigation */}
+          <PageNavigation
+            prev={{ label: 'Skills & Toolkit', path: '/skills' }}
+            next={{ label: 'Experience & Practicum', path: '/experience' }}
+          />
         </div>
-      </section>
+      </div>
 
       {/* MODALS */}
       {creditRiskProject && (

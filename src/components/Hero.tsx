@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { StudentProfile } from '../types/portfolio';
 
@@ -92,8 +93,8 @@ export const Hero: React.FC<HeroProps> = ({ profile }) => {
 
             {/* CTAs — exactly two */}
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <a
-                href="#projects"
+              <Link
+                to="/projects"
                 className="
                   group inline-flex items-center gap-2
                   rounded-lg
@@ -114,10 +115,10 @@ export const Hero: React.FC<HeroProps> = ({ profile }) => {
                     group-hover:translate-x-1
                   "
                 />
-              </a>
+              </Link>
 
-              <a
-                href="#contact"
+              <Link
+                to="/contact"
                 className="
                   inline-flex items-center gap-2
                   rounded-lg border
@@ -133,7 +134,7 @@ export const Hero: React.FC<HeroProps> = ({ profile }) => {
                 "
               >
                 Contact Me
-              </a>
+              </Link>
             </div>
           </div>
 

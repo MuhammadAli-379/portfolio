@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 
 import { SkillItem } from '../types/portfolio';
+import { PageHeader } from '../components/PageHeader';
+import { PageNavigation } from '../components/PageNavigation';
 
 interface SkillsSectionProps {
  skills: SkillItem[];
@@ -68,22 +70,10 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
  );
 
  return (
- <section
- id="skills"
- className="
- relative
- overflow-hidden
-
- py-20
- sm:py-24
-
- border-t
- border-[var(--theme-combined)]
-
- bg-[var(--theme-light)]
-
- "
- >
+  <div
+  id="skills"
+  className="relative min-h-[calc(100vh-72px)] overflow-hidden bg-[var(--theme-background)] pt-28 pb-20 sm:pt-32 sm:pb-24"
+  >
  {/* =====================================================
  Background Atmosphere
  ===================================================== */}
@@ -140,109 +130,35 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
  z-10
  "
  >
- {/* ===================================================
- Section Header
- =================================================== */}
+  {/* Dedicated Page Header */}
+  <PageHeader
+    badge="Technical Competencies"
+    badgeIcon={<Code2 className="h-3.5 w-3.5" />}
+    title="Skills & Toolkit"
+    description="A practical toolkit built through Business Data Analytics coursework, laboratory exercises, and project-based work across data preparation, analysis, visualization, and business intelligence."
+  />
 
- <div
- className="
- flex
- flex-col
- lg:flex-row
- lg:items-end
- lg:justify-between
+  <div
+  className="
+  flex
+  flex-col
+  lg:flex-row
+  lg:items-center
+  lg:justify-between
 
- gap-7
+  gap-5
 
- mb-12
- "
- >
- {/* Header Content */}
-
- <div className="max-w-2xl">
- <div
- className="
- inline-flex
- items-center
- gap-2
-
- mb-3
-
- text-[10px]
- sm:text-xs
-
- font-mono
- font-semibold
-
- uppercase
- tracking-[0.16em]
-
- text-[var(--theme-combined)]
-
- "
- >
- <span
- className="
- flex
- items-center
- justify-center
-
- w-6
- h-6
-
- rounded-md
-
- bg-[var(--theme-combined)]/[0.07]
-
- border
- border-[var(--theme-combined)]/15
-
- "
- >
- <Layers className="w-3.5 h-3.5" />
- </span>
-
- <span>Technical Competencies</span>
- </div>
-
- <h2
- className="
- text-3xl
- sm:text-4xl
- lg:text-[2.6rem]
-
- font-extrabold
- tracking-[-0.035em]
-
- leading-tight
-
- text-[var(--theme-combined)]
-
- "
- >
- Skills &amp; Toolkit
- </h2>
-
- <p
- className="
- mt-3
-
- text-sm
- sm:text-[15px]
-
- leading-7
-
- text-[var(--theme-combined)]/75
-
- max-w-2xl
- "
- >
- A practical toolkit built through Business Data
- Analytics coursework, laboratory exercises, and
- project-based work across data preparation,
- analysis, visualization, and business intelligence.
- </p>
- </div>
+  mb-10
+  "
+  >
+  <div>
+    <h3 className="text-base font-bold text-[var(--theme-text)]">
+      Skill Matrix & Competencies
+    </h3>
+    <p className="text-xs text-[var(--theme-text-secondary)]">
+      Filter by domain or browse all analytical tools
+    </p>
+  </div>
 
  {/* =================================================
  Filter Controls
@@ -889,7 +805,13 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
  </p>
  </div>
  </div>
+
+ {/* Page Navigation */}
+ <PageNavigation
+   prev={{ label: 'About Me', path: '/about' }}
+   next={{ label: 'Academic Projects', path: '/projects' }}
+ />
  </div>
- </section>
+ </div>
  );
 };
