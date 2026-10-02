@@ -127,7 +127,7 @@ const VALID_THEMES: ThemeId[] = [
 ];
 
 const DEFAULT_THEME: ThemeId = 'burgundy';
-const DEFAULT_MODE: ThemeMode = 'light';
+const DEFAULT_MODE: ThemeMode = 'dark';
 const DEFAULT_LIGHT: LightId = 'analyst-slate';
 
 function readStorage<T extends string>(
@@ -440,6 +440,24 @@ function AppContent() {
         transition-colors duration-300
       "
     >
+      {/* Skip to Content link for accessibility (WCAG AA) */}
+      <a
+        href="#main-content"
+        className="
+          sr-only focus:not-sr-only
+          focus:fixed focus:top-3 focus:left-3 focus:z-[100]
+          focus:px-4 focus:py-2.5
+          focus:rounded-xl
+          focus:bg-[var(--theme-surface)]
+          focus:text-[var(--theme-accent)]
+          focus:border focus:border-[var(--theme-accent)]
+          focus:shadow-xl focus:outline-none
+          focus:text-xs focus:font-mono focus:font-semibold
+        "
+      >
+        Skip to main content
+      </a>
+
       <ScrollProgressBar />
 
       <Navbar
@@ -656,23 +674,33 @@ function AppContent() {
 
       <div
         className="
+          floating-ai-button
           fixed bottom-4 right-4 z-40
           sm:bottom-6 sm:right-6
+          transition-opacity duration-200
         "
       >
         <button
           type="button"
           onClick={openAssistant}
+          aria-label="Ask Portfolio AI"
           className="
-            group inline-flex items-center gap-2
+            group inline-flex items-center gap-2.5
             rounded-full
-            border border-[var(--theme-primary-light)]
-            bg-[var(--theme-primary)]
+            border border-[var(--theme-accent)]
+            bg-[var(--theme-surface)]
+            text-[var(--theme-text)]
             px-4 py-2.5
-            text-white
-            shadow-lg
+            min-h-[44px]
+            shadow-none
             transition-all duration-200
             hover:-translate-y-0.5
+            hover:brightness-105
+            focus:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-[var(--theme-accent)]
+            focus-visible:ring-offset-2
+            focus-visible:ring-offset-[var(--theme-background)]
           "
         >
           <span
@@ -680,19 +708,19 @@ function AppContent() {
               flex h-7 w-7
               items-center justify-center
               rounded-full
-              border border-[var(--theme-accent)]/25
-              bg-[var(--theme-accent)]/10
+              border border-[var(--theme-accent)]/30
+              bg-[var(--theme-accent)]/15
             "
           >
             <Sparkles
               className="
-                h-3.5 w-3.5
+                h-4 w-4
                 text-[var(--theme-accent)]
               "
             />
           </span>
 
-          <span className="text-xs font-semibold">
+          <span className="text-xs font-semibold tracking-wide text-[var(--theme-text)]">
             Ask Portfolio AI
           </span>
         </button>

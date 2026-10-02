@@ -28,6 +28,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { AcademicProject } from '../types/portfolio';
+import { CaseStudyModalShell, TabItem } from './CaseStudyModalShell';
 
 interface FinancialRatioCaseStudyModalProps {
   isOpen: boolean;
@@ -197,113 +198,55 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
 
   const currentDupont = getDupontValues(dupontCompany, dupontYear);
 
+  const TABS: TabItem[] = [
+    { id: 'overview', label: <span className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /><span>Overview & Scale</span></span> },
+    { id: 'dashboard', label: <span className="flex items-center gap-1.5"><BarChart3 className="w-3.5 h-3.5" /><span>FY2025 Dashboard</span></span> },
+    { id: 'ratios', label: <span className="flex items-center gap-1.5"><LineChart className="w-3.5 h-3.5" /><span>5-Year Ratio Trends</span></span> },
+    { id: 'horizontal-vertical', label: <span className="flex items-center gap-1.5"><FileSpreadsheet className="w-3.5 h-3.5" /><span>Horizontal & Common-Size</span></span> },
+    { id: 'dupont', label: <span className="flex items-center gap-1.5"><Calculator className="w-3.5 h-3.5" /><span>DuPont Analysis</span></span> },
+    { id: 'valuation', label: <span className="flex items-center gap-1.5"><Scale className="w-3.5 h-3.5" /><span>Valuation & Benchmarking</span></span> },
+    { id: 'risk-pestel', label: <span className="flex items-center gap-1.5"><ShieldAlert className="w-3.5 h-3.5" /><span>Risk & PESTEL Analysis</span></span> },
+  ];
+
+  const subHeader = (
+    <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex items-center gap-2 text-xs font-mono text-[var(--theme-text-muted)]">
+        <span>Five-Year Comparative Financial Analysis · DuPont Decomposition · Horizontal & Vertical Analysis (FY2021–FY2025)</span>
+      </div>
+      <div className="flex items-center gap-3 px-3 py-1 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[11px] font-mono">
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+          <span className="text-[var(--theme-text)] font-semibold">OGDC</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+          <span className="text-[var(--theme-text)] font-semibold">PPL</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+          <span className="text-[var(--theme-text)] font-semibold">MARI</span>
+        </span>
+      </div>
+    </div>
+  );
+
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="financial-ratio-modal-title"
+    <CaseStudyModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      project={project}
+      projectNumber="05"
+      category="Corporate Finance"
+      title={project?.title || "Financial Ratio Analysis — OGDC, PPL & MARI"}
+      subtitle="Business Finance • FY 2021–2025"
+      metadataText="Five-Year Comparative Financial Analysis · DuPont Decomposition · Horizontal & Vertical Analysis (FY2021–FY2025)"
+      liveDemoUrl="https://financial-analysis-dashboard-109.streamlit.app/"
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={(tabId) => setActiveTab(tabId as any)}
+      subHeader={subHeader}
     >
-      <div 
-        className="relative w-full max-w-6xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-4 max-h-[92vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Top Header Bar */}
-        <div className="p-5 sm:px-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sticky top-0 z-20 backdrop-blur-sm">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-mono text-[10px] font-bold uppercase tracking-wider">
-                <BarChart3 className="w-3 h-3" />
-                Project 05 · Academic Project
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-mono text-[10px] font-semibold">
-                <GraduationCap className="w-3 h-3" />
-                Business Finance • FY 2021–2025
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono text-[10px] font-semibold">
-                <CheckCircle2 className="w-3 h-3" />
-                COMSATS Islamabad (Management Sciences)
-              </span>
-            </div>
-            <h2 id="financial-ratio-modal-title" className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Financial Ratio Analysis — OGDC, PPL & MARI
-            </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              Five-Year Comparative Financial Analysis, DuPont Decomposition, Horizontal & Vertical Analysis, Risk & Valuation Framework (FY2021–FY2025)
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            {/* Visual Company Legend */}
-            <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[11px] font-mono">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">OGDC</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">PPL</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">MARI</span>
-              </span>
-            </div>
-
-            {/* Live Streamlit Dashboard Button */}
-            <a
-              href="https://financial-analysis-dashboard-109.streamlit.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-sm hover:-translate-y-0.5"
-              title="Open Live Streamlit Dashboard (new tab)"
-            >
-              <span>Live App</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
-            <button
-              onClick={onClose}
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              aria-label="Close dialog"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-950/40 px-4 sm:px-8 overflow-x-auto no-scrollbar gap-1">
-          {[
-            { id: 'overview', label: 'Overview & Scale', icon: BookOpen },
-            { id: 'dashboard', label: 'FY2025 Dashboard', icon: BarChart3 },
-            { id: 'ratios', label: '5-Year Ratio Trends', icon: LineChart },
-            { id: 'horizontal-vertical', label: 'Horizontal & Common-Size', icon: FileSpreadsheet },
-            { id: 'dupont', label: 'DuPont Analysis', icon: Calculator },
-            { id: 'valuation', label: 'Valuation & Benchmarking', icon: Scale },
-            { id: 'risk-pestel', label: 'Risk & PESTEL Analysis', icon: ShieldAlert }
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 py-3 px-3.5 border-b-2 font-medium text-xs whitespace-nowrap transition-colors cursor-pointer ${
-                  isActive
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-white/50 dark:bg-slate-900/50'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-500' : 'text-slate-400'}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Modal Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-8 select-text">
+      <div className="space-y-8 select-text">
           
           {/* ================= TAB 1: EXECUTIVE OVERVIEW & SCALE ================= */}
           {activeTab === 'overview' && (
@@ -326,7 +269,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
                 {/* OGDC Card */}
-                <div className="p-5 rounded-2xl border-2 border-blue-500/30 bg-blue-500/5 dark:bg-blue-950/20 space-y-3 relative overflow-hidden">
+                <div className="p-5 rounded-xl border border-blue-500/30 bg-blue-500/5 dark:bg-blue-950/20 space-y-3 relative overflow-hidden shadow-none">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500 text-white">
                       OGDC · Scale Leader
@@ -358,7 +301,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
                 </div>
 
                 {/* PPL Card */}
-                <div className="p-5 rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-3 relative overflow-hidden">
+                <div className="p-5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-3 relative overflow-hidden shadow-none">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500 text-white">
                       PPL · Major Producer
@@ -390,7 +333,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
                 </div>
 
                 {/* MARI Card */}
-                <div className="p-5 rounded-2xl border-2 border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 space-y-3 relative overflow-hidden">
+                <div className="p-5 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 space-y-3 relative overflow-hidden shadow-none">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500 text-white">
                       MARI · Efficiency Leader
@@ -424,7 +367,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* Analytical Scope Overview */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 space-y-3">
+              <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 space-y-3 shadow-none">
                 <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                   <Flame className="w-4 h-4 text-blue-500" />
                   Comparative Analytical Framework (FY2021–FY2025)
@@ -453,7 +396,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* Data Inconsistency & Methodology Transparency Section (Req #19) */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-3">
+              <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-3 shadow-none">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-amber-500" />
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 dark:text-white">
@@ -496,7 +439,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* Cross-Company FY2025 Comparison Table */}
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 overflow-hidden shadow-sm">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 overflow-hidden shadow-none">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs font-mono">
                     <thead className="bg-slate-100 dark:bg-slate-800/80 text-[11px] text-slate-600 dark:text-slate-300 uppercase border-b border-slate-200 dark:border-slate-800">
@@ -620,7 +563,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* Dynamic Chart Container */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4">
+              <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4 shadow-none">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <span className="font-mono text-[10px] uppercase font-bold text-slate-400">
@@ -895,7 +838,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* Five-Year Detailed Historical Table */}
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-none">
                 <div className="p-3 bg-slate-50 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
                   <span className="font-bold font-mono text-slate-900 dark:text-white">
                     {selectedCompany} Complete 5-Year Ratio Matrix (FY2021–FY2025)
@@ -964,7 +907,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
             <div className="space-y-6">
               
               {/* Revenue Historical Trajectory (Section 5) */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4">
+              <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4 shadow-none">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="space-y-0.5">
                     <span className="font-mono text-[10px] text-blue-600 dark:text-blue-400 uppercase font-bold">
@@ -1024,7 +967,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* Horizontal Analysis (Section 6) */}
-              <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4">
+              <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4 shadow-none">
                 <div className="space-y-0.5">
                   <span className="font-mono text-[10px] text-indigo-600 dark:text-indigo-400 uppercase font-bold">
                     Section 6 · Horizontal Growth Analysis (2021–2025)
@@ -1191,7 +1134,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
               </div>
 
               {/* DuPont Visual Equation Component */}
-              <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70 space-y-4">
+              <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70 space-y-4 shadow-none">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                   <h4 className="text-sm font-bold text-slate-900 dark:text-white font-mono uppercase">
                     {dupontCompany} — FY{dupontYear} DuPont Equation Breakdown
@@ -1359,7 +1302,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
                   </div>
 
                   {/* DCF Flow Map */}
-                  <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4">
+                  <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-4 shadow-none">
                     <span className="font-mono text-xs font-bold text-slate-900 dark:text-white uppercase block">
                       Seven-Step DCF Analytical Flow
                     </span>
@@ -1545,28 +1488,7 @@ export const FinancialRatioCaseStudyModal: React.FC<FinancialRatioCaseStudyModal
             </div>
           )}
 
-        </div>
-
-        {/* Modal Footer */}
-        <div className="p-4 px-6 sm:px-8 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[11px] font-mono">
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-            <span>Academic Financial Analysis (FY2021–FY2025)</span>
-            <span>·</span>
-            <span>COMSATS University Islamabad — Business Finance</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white text-xs font-semibold transition-colors cursor-pointer"
-            >
-              Close Case Study
-            </button>
-          </div>
-        </div>
-
       </div>
-    </div>
+    </CaseStudyModalShell>
   );
 };

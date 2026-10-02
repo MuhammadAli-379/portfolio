@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Moon, Sun } from 'lucide-react';
 
 export type ThemeId = 'burgundy' | 'navy' | 'charcoal' | 'grey' | 'silver';
@@ -92,26 +92,28 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
         onClick={() => setIsOpen((c) => !c)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        aria-label={`Change theme (currently ${mode})`}
+        aria-label={`Change theme (currently ${mode} mode, ${mode === 'dark' ? theme : light})`}
         title={`${mode === 'dark' ? 'Dark' : 'Light'} theme`}
         className="
-          group flex h-9 items-center gap-2 rounded-xl
+          group flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-xl
           border border-[var(--theme-border)]
           bg-[var(--theme-surface)]
           text-[var(--theme-text)]
-          px-2.5 shadow-sm transition-all duration-200
-          hover:-translate-y-0.5 hover:shadow-lg
+          px-3 shadow-sm transition-all duration-200
+          hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--theme-accent)]/50
           focus:outline-none focus-visible:ring-2
           focus-visible:ring-[var(--theme-accent)]
+          focus-visible:ring-offset-2
+          focus-visible:ring-offset-[var(--theme-background)]
         "
       >
         {mode === 'dark' ? (
-          <Moon className="h-4 w-4 opacity-90" />
+          <Moon className="h-4 w-4 text-[var(--theme-accent)]" />
         ) : (
-          <Sun className="h-4 w-4 opacity-90" />
+          <Sun className="h-4 w-4 text-[var(--theme-accent)]" />
         )}
         <ChevronDown
-          className={`h-3.5 w-3.5 opacity-70 transition-transform duration-200 ${
+          className={`h-3.5 w-3.5 text-[var(--theme-text-secondary)] transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
@@ -121,16 +123,17 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
         <div
           role="menu"
           className="
-            absolute right-0 top-[calc(100%+0.6rem)] z-50 w-60
+            absolute right-0 top-[calc(100%+0.6rem)] z-50 w-64
             overflow-hidden rounded-2xl
             border border-[var(--theme-border)]
             bg-[var(--theme-surface)]
             text-[var(--theme-text)]
-            p-3 shadow-[0_18px_50px_rgba(0,0,0,0.4)]
+            p-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.5)]
+            backdrop-blur-md
           "
         >
           {/* MODE */}
-          <p className="text-[10px] font-mono uppercase tracking-[0.18em] opacity-60 mb-2">
+          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--theme-text-muted)] mb-2.5 font-medium">
             Mode
           </p>
 
@@ -139,6 +142,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
             className="
               grid grid-cols-2 gap-1 rounded-xl
               border border-[var(--theme-border)]
+              bg-[var(--theme-background-soft)]
               p-1 mb-4
             "
           >
@@ -148,13 +152,14 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
               aria-selected={mode === 'dark'}
               onClick={() => onModeChange('dark')}
               className={`
-                flex items-center justify-center gap-1.5
-                rounded-lg py-1.5 text-xs font-semibold
+                flex min-h-[40px] items-center justify-center gap-1.5
+                rounded-lg py-2 text-xs font-semibold
                 transition-all duration-150
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]
                 ${
                   mode === 'dark'
-                    ? 'bg-[var(--theme-primary)] text-white'
-                    : 'opacity-60 hover:opacity-100'
+                    ? 'bg-[var(--theme-primary)] text-white shadow-sm'
+                    : 'text-[var(--theme-text-secondary)] hover:text-[var(--theme-text)] hover:bg-[var(--theme-surface)]'
                 }
               `}
             >
@@ -167,13 +172,14 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
               aria-selected={mode === 'light'}
               onClick={() => onModeChange('light')}
               className={`
-                flex items-center justify-center gap-1.5
-                rounded-lg py-1.5 text-xs font-semibold
+                flex min-h-[40px] items-center justify-center gap-1.5
+                rounded-lg py-2 text-xs font-semibold
                 transition-all duration-150
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]
                 ${
                   mode === 'light'
-                    ? 'bg-[var(--theme-primary)] text-white'
-                    : 'opacity-60 hover:opacity-100'
+                    ? 'bg-[var(--theme-primary)] text-white shadow-sm'
+                    : 'text-[var(--theme-text-secondary)] hover:text-[var(--theme-text)] hover:bg-[var(--theme-surface)]'
                 }
               `}
             >
@@ -183,8 +189,8 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
           </div>
 
           {/* COLOR */}
-          <p className="text-[10px] font-mono uppercase tracking-[0.18em] opacity-60 mb-2">
-            {mode === 'dark' ? 'Theme' : 'Light'}
+          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--theme-text-muted)] mb-2.5 font-medium">
+            {mode === 'dark' ? 'Theme' : 'Light Palette'}
           </p>
 
           <div className="space-y-1">
@@ -198,15 +204,16 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
                   aria-checked={isActive}
                   onClick={() => handleSelect(c.id)}
                   className={`
-                    flex w-full items-center gap-2.5
-                    rounded-lg px-2 py-2 text-left
+                    flex min-h-[44px] w-full items-center gap-3
+                    rounded-xl px-3 py-2.5 text-left
                     text-xs font-medium transition-all duration-150
-                    ${isActive ? 'bg-white/5' : 'hover:bg-white/5'}
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]
+                    ${isActive ? 'bg-[var(--theme-background-soft)] text-[var(--theme-accent)] font-semibold border border-[var(--theme-border)]' : 'text-[var(--theme-text)] hover:bg-[var(--theme-background-soft)]'}
                   `}
                 >
                   <span
                     className={`
-                      flex h-3.5 w-3.5 shrink-0 items-center justify-center
+                      flex h-4 w-4 shrink-0 items-center justify-center
                       rounded-full border-2 transition-colors
                       ${
                         isActive
@@ -217,7 +224,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
                   >
                     {isActive && (
                       <span
-                        className="h-1.5 w-1.5 rounded-full"
+                        className="h-2 w-2 rounded-full"
                         style={{ backgroundColor: 'var(--theme-accent)' }}
                       />
                     )}

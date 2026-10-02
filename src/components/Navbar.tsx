@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Menu,
   X,
@@ -13,6 +13,7 @@ import {
   FolderKanban,
   Briefcase,
   Mail,
+  ArrowUpRight,
 } from 'lucide-react';
 
 import {
@@ -63,14 +64,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAssistant,
   onOpenCustomize,
 }) => {
-  const [isScrolled, setIsScrolled] =
-    useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  const [mobileMenuOpen, setMobileMenuOpen] =
-    useState(false);
+  // Magnetic effect coordinates for primary CTA on desktop
+  const [ctaOffset, setCtaOffset] = useState({ x: 0, y: 0 });
 
-  const [scrollProgress, setScrollProgress] =
-    useState(0);
+  // Refs for mobile drawer focus trap & focus return
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
+  const wasMobileMenuOpen = useRef(false);
 
   const location = useLocation();
 
@@ -117,25 +121,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   /* =====================================================
-     Scroll State
+     Scroll State & Indicator
   ===================================================== */
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-
-      setIsScrolled(scrollY > 24);
+      setIsScrolled(scrollY > 20);
 
       const documentHeight =
-        document.documentElement.scrollHeight -
-        window.innerHeight;
+        document.documentElement.scrollHeight - window.innerHeight;
 
       if (documentHeight > 0) {
         setScrollProgress(
-          Math.min(
-            (scrollY / documentHeight) * 100,
-            100
-          )
+          Math.min((scrollY / documentHeight) * 100, 100)
         );
       } else {
         setScrollProgress(0);
@@ -143,42 +142,118 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
 
     handleScroll();
-
-    window.addEventListener(
-      'scroll',
-      handleScroll,
-      { passive: true }
-    );
-
-    return () => {
-      window.removeEventListener(
-        'scroll',
-        handleScroll
-      );
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
   /* =====================================================
-     Close Mobile Menu On Route Change
+     Close Mobile Menu on Route Change
   ===================================================== */
 
   useEffect(() => {
     setMobileMenuOpen(false);
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'instant' as ScrollBehavior,
-    });
   }, [location.pathname]);
 
   /* =====================================================
-     Shared Button Styling
+     Mobile Menu Focus Trap, Escape Key & Scroll Lock
+  ===================================================== */
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      wasMobileMenuOpen.current = true;
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      // Focus first interactive element inside drawer
+      const timer = setTimeout(() => {
+        if (mobileDrawerRef.current) {
+          const focusables = mobileDrawerRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusables.length > 0) {
+            focusables[0].focus();
+          }
+        }
+      }, 50);
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setMobileMenuOpen(false);
+          return;
+        }
+
+        if (e.key === 'Tab' && mobileDrawerRef.current) {
+          const focusables = Array.from(
+            mobileDrawerRef.current.querySelectorAll<HTMLElement>(
+              'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            )
+          );
+
+          if (focusables.length === 0) return;
+
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    } else {
+      // Return focus to menu button when closed
+      if (wasMobileMenuOpen.current) {
+        menuButtonRef.current?.focus();
+        wasMobileMenuOpen.current = false;
+      }
+    }
+  }, [mobileMenuOpen]);
+
+  /* =====================================================
+     Magnetic Hover for Primary CTA (Desktop Fine-Pointer Only,
+     Disabled on Touch & under prefers-reduced-motion)
+  ===================================================== */
+
+  const handleCtaMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (isFinePointer && !isReducedMotion) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.18;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.18;
+      setCtaOffset({ x, y });
+    }
+  };
+
+  const handleCtaMouseLeave = () => {
+    setCtaOffset({ x: 0, y: 0 });
+  };
+
+  /* =====================================================
+     Shared Control Button Styling (44px touch targets)
   ===================================================== */
 
   const controlButton = `
     flex
-    h-9
-    w-9
+    min-h-[44px]
+    min-w-[44px]
+    h-11
+    w-11
     shrink-0
     cursor-pointer
     items-center
@@ -192,10 +267,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     transition-all
     duration-200
 
-    hover:-translate-y-px
-    hover:border-[var(--theme-primary-light)]
-    hover:bg-[var(--theme-surface-soft)]
-    hover:text-[var(--theme-primary-light)]
+    hover:-translate-y-0.5
+    hover:border-[var(--theme-accent)]/50
+    hover:bg-[var(--theme-background-soft)]
+    hover:text-[var(--theme-text)]
 
     focus:outline-none
     focus-visible:ring-2
@@ -207,9 +282,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       {/* =================================================
-          Scroll Progress
+          Scroll Progress Indicator
       ================================================= */}
-
       <div
         className="
           pointer-events-none
@@ -226,23 +300,18 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div
           className="
             h-full
-            bg-gradient-to-r
-            from-[var(--theme-primary)]
-            via-[var(--theme-primary-light)]
-            to-[var(--theme-accent)]
+            bg-[var(--theme-accent)]
             transition-[width]
-            duration-100
+            duration-150
+            ease-out
           "
-          style={{
-            width: `${scrollProgress}%`,
-          }}
+          style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
       {/* =================================================
-          Header
+          Header Container
       ================================================= */}
-
       <header
         className={`
           fixed
@@ -252,14 +321,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           z-50
           transition-all
           duration-300
-
           ${
             isScrolled
               ? `
                 border-b
                 border-[var(--theme-border)]
-                bg-[var(--theme-background)]/90
-                shadow-[0_8px_30px_rgba(0,0,0,0.12)]
+                bg-[var(--theme-background)]/85
+                shadow-[0_8px_32px_rgba(0,0,0,0.25)]
                 backdrop-blur-xl
               `
               : `
@@ -274,7 +342,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="
             mx-auto
             flex
-            h-[72px]
+            h-20
             max-w-7xl
             items-center
             justify-between
@@ -287,47 +355,55 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* =================================================
               Brand
           ================================================= */}
-
           <Link
             to="/"
-            aria-label="Go to Home"
+            aria-label={`Go to home page - ${profile.name}`}
             className="
               group
               flex
+              min-h-[44px]
               min-w-0
               shrink-0
               items-center
               gap-3
+              rounded-xl
+              pr-2
+              focus:outline-none
+              focus-visible:ring-2
+              focus-visible:ring-[var(--theme-accent)]
+              focus-visible:ring-offset-2
+              focus-visible:ring-offset-[var(--theme-background)]
             "
           >
             <div
               className="
                 relative
                 flex
-                h-9
-                w-9
+                h-10
+                w-10
                 shrink-0
                 items-center
                 justify-center
                 rounded-xl
-                bg-[var(--theme-primary)]
-                text-white
-                shadow-[0_5px_15px_rgba(0,0,0,0.16)]
+                border
+                border-[var(--theme-border)]
+                bg-[var(--theme-surface)]
+                text-[var(--theme-accent)]
+                shadow-sm
                 transition-all
                 duration-200
-                group-hover:-translate-y-px
+                group-hover:border-[var(--theme-accent)]/60
+                group-hover:-translate-y-0.5
               "
             >
-              <GraduationCap
-                className="h-[17px] w-[17px]"
-              />
+              <GraduationCap className="h-5 w-5" />
 
               <span
                 aria-hidden="true"
                 className="
                   absolute
-                  -bottom-1
-                  -right-1
+                  -bottom-0.5
+                  -right-0.5
                   h-2.5
                   w-2.5
                   rounded-full
@@ -342,16 +418,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span
                 className="
                   block
-                  max-w-[150px]
+                  max-w-[155px]
                   truncate
-                  text-sm
-                  font-bold
+                  font-display
+                  text-base
+                  font-semibold
                   tracking-tight
                   text-[var(--theme-text)]
                   transition-colors
-                  group-hover:text-[var(--theme-primary-light)]
+                  group-hover:text-[var(--theme-accent)]
                   sm:max-w-none
-                  sm:text-[15px]
+                  sm:text-lg
                 "
               >
                 {profile.name}
@@ -361,10 +438,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="
                   hidden
                   truncate
-                  text-[9px]
+                  font-mono
+                  text-[9.5px]
                   font-medium
                   uppercase
-                  tracking-[0.15em]
+                  tracking-[0.16em]
                   text-[var(--theme-text-muted)]
                   sm:block
                 "
@@ -375,20 +453,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           </Link>
 
           {/* =================================================
-              Desktop Navigation
+              Desktop Navigation (7 Dedicated Pages)
           ================================================= */}
-
           <nav
             className="
               hidden
               items-center
-              gap-0.5
-              rounded-2xl
+              gap-1
+              rounded-full
               border
               border-[var(--theme-border)]
-              bg-[var(--theme-surface)]/80
-              p-1
-              backdrop-blur-sm
+              bg-[var(--theme-surface)]/75
+              p-1.5
+              shadow-sm
+              backdrop-blur-md
               lg:flex
             "
             aria-label="Main Navigation"
@@ -401,23 +479,29 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className={({ isActive }) => `
                   relative
                   flex
+                  min-h-[36px]
                   items-center
                   gap-1.5
-                  rounded-xl
-                  px-3
-                  py-2
-                  text-[11px]
-                  font-semibold
+                  rounded-full
+                  px-3.5
+                  py-1.5
+                  font-sans
+                  text-xs
+                  font-medium
                   tracking-wide
                   transition-all
                   duration-200
+                  focus:outline-none
+                  focus-visible:ring-2
+                  focus-visible:ring-[var(--theme-accent)]
 
                   ${
                     isActive
                       ? `
                         bg-[var(--theme-primary)]/15
                         text-[var(--theme-accent)]
-                        shadow-sm
+                        font-semibold
+                        shadow-xs
                       `
                       : `
                         text-[var(--theme-text-secondary)]
@@ -427,27 +511,33 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }
                 `}
               >
-                {item.icon && <span className="opacity-80">{item.icon}</span>}
+                {item.icon && (
+                  <span className="opacity-80 transition-opacity group-hover:opacity-100">
+                    {item.icon}
+                  </span>
+                )}
 
-                <span>
-                  {item.label}
-                </span>
+                <span>{item.label}</span>
 
-                {/* Active underline */}
+                {/* Animated underline indicator */}
                 <span
                   aria-hidden="true"
                   className={`
                     absolute
-                    bottom-0.5
-                    left-1/2
+                    bottom-1
+                    left-3
+                    right-3
                     h-[2px]
-                    w-5
-                    -translate-x-1/2
                     rounded-full
                     bg-[var(--theme-accent)]
                     transition-all
                     duration-200
-                    ${(location.pathname === item.path || (item.path === '/' && location.pathname === '')) ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}
+                    ${
+                      location.pathname === item.path ||
+                      (item.path === '/' && location.pathname === '')
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-0 scale-75'
+                    }
                   `}
                 />
               </NavLink>
@@ -455,41 +545,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* =================================================
-              Actions
+              Actions Bar
           ================================================= */}
-
-          <div
-            className="
-              flex
-              shrink-0
-              items-center
-              gap-1
-            "
-          >
-            {/* Assistant */}
-
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {/* Ask AI Trigger */}
             <button
               type="button"
               onClick={onOpenAssistant}
               className="
+                group
                 hidden
+                min-h-[44px]
                 cursor-pointer
                 items-center
-                gap-1.5
+                gap-2
                 rounded-xl
                 border
-                border-transparent
-                bg-[#0F172A]
-                px-3
+                border-[var(--theme-border)]
+                bg-[var(--theme-surface)]
+                px-3.5
                 py-2
-                text-[10px]
-                font-semibold
-                text-white
-                shadow-[0_2px_10px_rgba(15,23,42,0.18)]
+                text-xs
+                font-medium
+                text-[var(--theme-text)]
+                shadow-xs
                 transition-all
                 duration-200
-                hover:-translate-y-px
-                hover:shadow-[0_4px_18px_rgba(37,99,235,0.35)]
+                hover:-translate-y-0.5
+                hover:border-[var(--theme-accent)]/50
+                hover:bg-[var(--theme-background-soft)]
                 focus:outline-none
                 focus-visible:ring-2
                 focus-visible:ring-[var(--theme-accent)]
@@ -497,62 +581,72 @@ export const Navbar: React.FC<NavbarProps> = ({
                 focus-visible:ring-offset-[var(--theme-background)]
                 sm:flex
               "
-              aria-label="Ask Portfolio Assistant"
-              title="Ask Portfolio Assistant"
+              aria-label="Ask Portfolio AI assistant about Abubakar's projects and coursework"
+              title="Ask Portfolio AI assistant"
             >
               <Sparkles
                 className="
-                  h-3.5
-                  w-3.5
-                  text-[#2563EB]
+                  h-4
+                  w-4
+                  text-[var(--theme-accent)]
+                  transition-transform
+                  duration-200
+                  group-hover:scale-110
                 "
               />
-
               <span className="hidden md:inline">
                 Ask Portfolio AI
               </span>
             </button>
 
-            {/* CV */}
-
+            {/* View CV Trigger (Primary CTA with magnetic desktop feel) */}
             <button
               type="button"
               onClick={onOpenResume}
+              onMouseMove={handleCtaMouseMove}
+              onMouseLeave={handleCtaMouseLeave}
+              style={{
+                transform: `translate(${ctaOffset.x}px, ${ctaOffset.y}px)`,
+              }}
               className="
+                group
                 flex
+                min-h-[44px]
                 cursor-pointer
                 items-center
-                gap-1.5
+                gap-2
                 rounded-xl
+                border
+                border-[var(--theme-primary-light)]/40
                 bg-[var(--theme-primary)]
-                px-3.5
-                py-2
-                text-[10px]
-                font-bold
+                px-4
+                py-2.5
+                font-sans
+                text-xs
+                font-semibold
                 text-white
-                shadow-[0_5px_15px_rgba(0,0,0,0.15)]
-                transition-all
-                duration-200
-                hover:-translate-y-px
-                hover:bg-[var(--theme-primary-light)]
+                shadow-sm
+                transition-transform
+                duration-150
+                ease-out
+                hover:shadow-md
+                hover:border-[var(--theme-accent)]/70
+                active:scale-[0.98]
                 focus:outline-none
                 focus-visible:ring-2
                 focus-visible:ring-[var(--theme-accent)]
                 focus-visible:ring-offset-2
                 focus-visible:ring-offset-[var(--theme-background)]
               "
-              aria-label="View Academic Resume"
-              title="View Academic Resume"
+              aria-label="View academic resume and curriculum vitae"
+              title="View CV"
             >
-              <FileText className="h-3.5 w-3.5" />
-
-              <span className="hidden sm:inline">
-                View CV
-              </span>
+              <FileText className="h-4 w-4 transition-transform duration-200 group-hover:scale-105" />
+              <span>View CV</span>
+              <ArrowUpRight className="hidden h-3 w-3 opacity-70 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 sm:inline" />
             </button>
 
-            {/* Theme */}
-
+            {/* Theme Switcher */}
             <ThemeSwitcher
               theme={theme}
               mode={mode}
@@ -562,31 +656,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               onModeChange={onModeChange}
             />
 
-            {/* Customize */}
-
+            {/* Portfolio Customizer Trigger (if enabled) */}
             {onOpenCustomize && (
               <button
                 type="button"
                 onClick={onOpenCustomize}
                 className={controlButton}
-                aria-label="Customize portfolio"
+                aria-label="Customize portfolio content and metrics"
                 title="Customize portfolio"
               >
-                <SlidersHorizontal
-                  className="h-[17px] w-[17px]"
-                />
+                <SlidersHorizontal className="h-4 w-4" />
               </button>
             )}
 
-            {/* Mobile Menu */}
-
+            {/* Mobile Menu Toggle Button (44px target) */}
             <button
+              ref={menuButtonRef}
               type="button"
-              onClick={() =>
-                setMobileMenuOpen(
-                  (open) => !open
-                )
-              }
+              onClick={() => setMobileMenuOpen((open) => !open)}
               className={`
                 ${controlButton}
                 lg:hidden
@@ -597,52 +684,61 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'Open navigation menu'
               }
               aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-panel"
             >
               {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-[var(--theme-text)]" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5 text-[var(--theme-text)]" />
               )}
             </button>
           </div>
         </div>
 
         {/* =================================================
-            Mobile Menu
+            Accessible Mobile Navigation Drawer
         ================================================= */}
-
         {mobileMenuOpen && (
           <div
+            ref={mobileDrawerRef}
+            id="mobile-nav-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation"
             className="
+              max-h-[calc(100vh-5rem)]
+              overflow-y-auto
+              overscroll-contain
               border-t
               border-[var(--theme-border)]
-              bg-[var(--theme-background)]/98
+              bg-[var(--theme-background)]/95
               px-4
-              pb-5
-              pt-3
-              shadow-[0_15px_35px_rgba(0,0,0,0.12)]
-              backdrop-blur-xl
+              pb-6
+              pt-3.5
+              shadow-[0_20px_40px_rgba(0,0,0,0.4)]
+              backdrop-blur-2xl
               lg:hidden
             "
           >
-            {/* Profile */}
-
+            {/* Student Profile Card Snapshot */}
             <div
               className="
-                mb-3
+                mb-3.5
                 flex
                 items-center
                 gap-3
-                border-b
+                rounded-xl
+                border
                 border-[var(--theme-border)]
-                pb-4
+                bg-[var(--theme-surface)]
+                p-3
               "
             >
               <div
                 className="
                   flex
-                  h-9
-                  w-9
+                  h-10
+                  w-10
                   shrink-0
                   items-center
                   justify-center
@@ -651,29 +747,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   text-white
                 "
               >
-                <GraduationCap className="h-4 w-4" />
+                <GraduationCap className="h-5 w-5" />
               </div>
 
               <div className="min-w-0">
-                <p
-                  className="
-                    truncate
-                    text-xs
-                    font-bold
-                    text-[var(--theme-text)]
-                  "
-                >
+                <p className="truncate font-display text-sm font-semibold text-[var(--theme-text)]">
                   {profile.name}
                 </p>
-
-                <p
-                  className="
-                    mt-0.5
-                    truncate
-                    text-[10px]
-                    text-[var(--theme-text-muted)]
-                  "
-                >
+                <p className="truncate font-mono text-[10px] text-[var(--theme-text-muted)]">
                   {profile.professionalTitle}
                 </p>
               </div>
@@ -686,24 +767,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                   items-center
                   gap-1.5
                   rounded-full
-                  bg-[var(--theme-primary)]/10
+                  border
+                  border-emerald-500/30
+                  bg-emerald-500/10
                   px-2.5
                   py-1
-                  text-[9px]
-                  font-semibold
-                  text-[var(--theme-primary-light)]
+                  text-[10px]
+                  font-medium
+                  text-emerald-400
                 "
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Available
               </span>
             </div>
 
-            {/* Mobile Links */}
-
+            {/* Mobile Nav Links (All 7 links with 44px+ touch targets) */}
             <nav
-              className="grid grid-cols-2 gap-1.5"
-              aria-label="Mobile Navigation"
+              className="grid grid-cols-2 gap-2"
+              aria-label="Mobile Menu Links"
             >
               {navItems.map((item) => (
                 <NavLink
@@ -713,31 +795,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) => `
                     flex
+                    min-h-[48px]
                     items-center
                     justify-between
                     rounded-xl
                     border
                     px-3.5
-                    py-2.5
+                    py-3
                     text-xs
-                    font-semibold
+                    font-medium
                     transition-all
                     duration-200
+                    focus:outline-none
+                    focus-visible:ring-2
+                    focus-visible:ring-[var(--theme-accent)]
 
                     ${
                       isActive
                         ? `
-                          border-[var(--theme-accent)]/30
+                          border-[var(--theme-accent)]/50
                           bg-[var(--theme-primary)]/15
                           text-[var(--theme-accent)]
-                          shadow-sm
+                          font-semibold
+                          shadow-xs
                         `
                         : `
                           border-[var(--theme-border)]
                           bg-[var(--theme-surface)]
                           text-[var(--theme-text-secondary)]
-                          hover:border-[var(--theme-primary-light)]/40
-                          hover:bg-[var(--theme-surface-soft)]
+                          hover:border-[var(--theme-accent)]/40
+                          hover:bg-[var(--theme-background-soft)]
                           hover:text-[var(--theme-text)]
                         `
                     }
@@ -745,73 +832,111 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <span className="flex items-center gap-2">
                     {item.icon}
-
-                    {item.label}
+                    <span>{item.label}</span>
                   </span>
 
-                  <ChevronRight
-                    className="
-                      h-3.5
-                      w-3.5
-                      opacity-50
-                    "
-                  />
+                  <ChevronRight className="h-3.5 w-3.5 text-[var(--theme-text-muted)]" />
                 </NavLink>
               ))}
             </nav>
 
-            {/* Mobile Actions */}
+            {/* Mobile Quick Action Buttons */}
+            <div className="mt-4 space-y-2.5 border-t border-[var(--theme-border)] pt-4">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenResume();
+                  }}
+                  className="
+                    flex
+                    min-h-[48px]
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    bg-[var(--theme-primary)]
+                    px-3
+                    py-3
+                    text-xs
+                    font-semibold
+                    text-white
+                    shadow-sm
+                    transition-all
+                    active:scale-[0.98]
+                    hover:bg-[var(--theme-primary-light)]
+                  "
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>View CV</span>
+                </button>
 
-            <div
-              className="
-                mt-4
-                border-t
-                border-[var(--theme-border)]
-                pt-4
-              "
-            >
-              {/* Theme */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAssistant();
+                  }}
+                  className="
+                    flex
+                    min-h-[48px]
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    border
+                    border-[var(--theme-border)]
+                    bg-[var(--theme-surface)]
+                    px-3
+                    py-3
+                    text-xs
+                    font-semibold
+                    text-[var(--theme-text)]
+                    shadow-sm
+                    transition-all
+                    active:scale-[0.98]
+                    hover:border-[var(--theme-accent)]/50
+                  "
+                >
+                  <Sparkles className="h-4 w-4 text-[var(--theme-accent)]" />
+                  <span>Ask AI</span>
+                </button>
+              </div>
 
+              {/* Theme selector snapshot row */}
               <div
                 className="
-                  mb-2
                   flex
+                  min-h-[48px]
                   items-center
                   justify-between
                   rounded-xl
                   border
                   border-[var(--theme-border)]
                   bg-[var(--theme-surface)]
-                  px-3
-                  py-2.5
+                  px-3.5
+                  py-2
                 "
               >
                 <div>
-                  <p
-                    className="
-                      text-[10px]
-                      font-semibold
-                      text-[var(--theme-text)]
-                    "
-                  >
-                    Color Theme
+                  <p className="font-sans text-[11px] font-semibold text-[var(--theme-text)]">
+                    Color Palette & Theme
                   </p>
-
-                  <p
-                    className="
-                      text-[9px]
-                      text-[var(--theme-text-muted)]
-                    "
-                  >
-                    {theme === 'burgundy'
-                      ? 'Burgundy & Gold'
-                      : theme === 'navy'
-                        ? 'Navy & Light Blue'
-                        : theme === 'charcoal'
-                          ? 'Charcoal & Slate'
-                          : theme === 'grey'
-                            ? 'Grey & Silver'
-                            : 'Silver & Gold'}
+                  <p className="font-mono text-[9px] text-[var(--theme-text-muted)]">
+                    {mode === 'dark'
+                      ? theme === 'burgundy'
+                        ? 'Obsidian & Champagne'
+                        : theme === 'navy'
+                          ? 'Navy & Ice Blue'
+                          : theme === 'charcoal'
+                            ? 'Charcoal & Amber'
+                            : theme === 'grey'
+                              ? 'Grey & Fawn'
+                              : 'Silver & Gold'
+                      : light}
                   </p>
                 </div>
 
@@ -824,102 +949,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onModeChange={onModeChange}
                 />
               </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                {/* Mobile CV */}
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenResume();
-                  }}
-                  className="
-                    flex
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    gap-2
-                    rounded-xl
-                    bg-[var(--theme-primary)]
-                    px-3
-                    py-3
-                    text-xs
-                    font-bold
-                    text-white
-                    transition-colors
-                    hover:bg-[var(--theme-primary-light)]
-                  "
-                >
-                  <FileText className="h-3.5 w-3.5" />
-
-                  View CV
-                </button>
-
-                {/* Mobile Assistant */}
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenAssistant();
-                  }}
-                  className="
-                    flex
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    gap-2
-                    rounded-xl
-                    border
-                    border-transparent
-                    bg-[#0F172A]
-                    px-3
-                    py-3
-                    text-xs
-                    font-bold
-                    text-white
-                    transition-all
-                    hover:shadow-[0_4px_18px_rgba(37,99,235,0.35)]
-                  "
-                >
-                  <Sparkles
-                    className="
-                      h-3.5
-                      w-3.5
-                      text-[#2563EB]
-                    "
-                  />
-
-                  Ask Portfolio AI
-                </button>
-              </div>
             </div>
 
-            {/* Hint */}
-
-            <div
-              className="
-                mt-3
-                flex
-                items-center
-                justify-center
-                gap-1.5
-                text-[9px]
-                text-[var(--theme-text-muted)]
-              "
-            >
-              <span>
-                Explore the portfolio
-              </span>
-
-              <ChevronRight
-                className="
-                  h-3
-                  w-3
-                  text-[var(--theme-accent)]
-                "
-              />
+            {/* Mobile Footer Hint */}
+            <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-[var(--theme-text-muted)]">
+              <span>Explore the portfolio</span>
+              <ChevronRight className="h-3 w-3 text-[var(--theme-accent)]" />
             </div>
           </div>
         )}
